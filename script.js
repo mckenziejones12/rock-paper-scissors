@@ -39,10 +39,16 @@ function playRound(playerSelection, computerSelection) {
 // variables
 let p1Score = 0;
 let p2Score = 0;
+const options = ["rock", "paper", "scissors"];
 
 // executing code below
 for (let i = 0; i < 5; i++) {
-  const userSelection = randomPlay();
+  const userSelection = prompt("Rock, Paper, or Scissors?");
+
+  if (!options.includes(userSelection.toLowerCase())) {
+    throw new Error("Selection does not exist");
+  }
+
   const randomSelection = randomPlay();
   const result = playRound(userSelection, randomSelection);
 
