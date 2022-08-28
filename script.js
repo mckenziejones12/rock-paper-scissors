@@ -6,10 +6,21 @@ function randomPlay() {
   return handChoices[randomWholeNumber];
 }
 
+/*
+ parameter 1 - playerSelection
+ Selection of the player
+
+ parameter 2 - computerSelection
+ Selection of the computer
+
+ Returns:
+ user or computer - depending on who wins
+*/
 function playRound(playerSelection, computerSelection) {
   const lowerCaseUserSelection = playerSelection.toLowerCase();
   const USER = "user";
   const COMPUTER = "computer";
+  const TIE = "tie";
 
   // user selection is rock
   if (lowerCaseUserSelection === "rock" && computerSelection === "paper") {
@@ -34,36 +45,141 @@ function playRound(playerSelection, computerSelection) {
   if (lowerCaseUserSelection === "scissors" && computerSelection === "rock") {
     return COMPUTER;
   }
+
+  return TIE;
 }
 
 // variables
-let p1Score = 0;
-let p2Score = 0;
-const options = ["rock", "paper", "scissors"];
+let userScore = 0;
+let computerScore = 0;
+let plays = 0;
 
-// executing code below
-for (let i = 0; i < 5; i++) {
-  const userSelection = prompt("Rock, Paper, or Scissors?");
+function updateScore(whoWon) {
+  plays++;
+  const finalScore = document.querySelector("#finalScore");
 
-  if (!options.includes(userSelection.toLowerCase())) {
-    throw new Error("Selection does not exist");
+  if (plays >= 5) {
+    if (userScore > computerScore) {
+      // show user won
+      finalScore.textContent = "User won!";
+    } else if (computerScore > userScore) {
+      // show computer won
+      finalScore.textContent = "Computer won!";
+    } else {
+      finalScore.textContent = "Tie game!";
+    }
+    return;
   }
 
-  const randomSelection = randomPlay();
-  const result = playRound(userSelection, randomSelection);
+  // scoreboard elements
+  const userScoreboard = document.querySelector("#userScoreH3");
+  const computerScoreboard = document.querySelector("#computerScoreH3");
 
-  if (result === "user") {
-    p1Score++;
-  } else if (result === "computer") {
-    p2Score++;
+  if (whoWon === "user") {
+    userScore++;
+  } else if (whoWon === "computer") {
+    computerScore++;
   }
 
-  console.log("Your score is ", p1Score);
-  console.log("Computer's score is ", p2Score);
+  // Update scoreboards
+  userScoreboard.textContent = `User Score: ${userScore}`;
+  computerScoreboard.textContent = `Computer Score: ${computerScore}`;
 }
 
-if (p1Score > p2Score) {
-  console.log("You win!");
-} else {
-  console.log("Computer wins!");
-}
+// Create our elements that go on our page
+// Create a div to hold results
+const div = document.createElement("div");
+div.style.border = "1px solid black";
+div.style.height = "200px";
+div.style.overflow = "scroll";
+
+// Create two h3's to show the running score
+const userScoreH3 = document.createElement("h3");
+userScoreH3.id = "userScoreH3";
+userScoreH3.textContent = "User Score: 0";
+
+const computerScoreH3 = document.createElement("h3");
+computerScoreH3.id = "computerScoreH3";
+computerScoreH3.textContent = "Computer Score: 0";
+
+// Final score element
+const finalScore = document.createElement("h1");
+finalScore.id = "finalScore";
+
+// Page body
+const body = document.querySelector("body");
+
+// 3 buttons (rock/paper/scissors)
+const btn1 = document.createElement("button");
+btn1.textContent = "rock";
+
+const btn2 = document.createElement("button");
+btn2.textContent = "paper";
+
+const btn3 = document.createElement("button");
+btn3.textContent = "scissors";
+
+// Define event listeners
+btn1.addEventListener("click", function (event) {
+  const paragraph = document.createElement("p");
+  const userSelection = event.target.innerText;
+  const compSelection = randomPlay();
+
+  if (plays >= 5) {
+    return;
+  }
+  // Play a round
+  const winner = playRound(userSelection, compSelection);
+
+  // Update our paragraph text
+  paragraph.textContent = winner;
+
+  // Add to results
+  div.appendChild(paragraph);
+
+  // Check and update score
+  updateScore(winner);
+});
+
+btn2.addEventListener("click", function (event) {
+  const paragraph = document.createElement("p");
+  const userSelection = event.target.innerText;
+  const compSelection = randomPlay();
+  if (plays >= 5) {
+    return;
+  }
+
+  const winner = playRound(userSelection, compSelection);
+
+  paragraph.textContent = winner;
+
+  div.appendChild(paragraph);
+
+  updateScore(winner);
+});
+
+btn3.addEventListener("click", function (event) {
+  const paragraph = document.createElement("p");
+  const userSelection = event.target.innerText;
+  const compSelection = randomPlay();
+  if (plays >= 5) {
+    return;
+  }
+
+  const winner = playRound(userSelection, compSelection);
+
+  paragraph.textContent = winner;
+
+  div.appendChild(paragraph);
+
+  updateScore(winner);
+});
+
+// Append things to page
+body.appendChild(btn1);
+body.appendChild(btn2);
+body.appendChild(btn3);
+body.appendChild(div);
+body.appendChild(userScoreH3);
+body.appendChild(computerScoreH3);
+body.appendChild(finalScore);
